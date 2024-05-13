@@ -1,5 +1,9 @@
+/.phpunit.result.cache
 /composer.lock
 /phpunit.xml
+/drivers
 /vendor/
 /var/
-/.phpunit.result.cache
+/tests/app/var
+/tests/app/public/build/
+/tests/app/yarn.lock

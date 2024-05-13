@@ -91,6 +91,7 @@ jobs:
                 exclude:
                   - component: Swup  # has no tests
                   - component: Turbo # has its own workflow (test-turbo.yml)
+                  - component: LiveComponent # has its own workflow (test-live-component.yml)
                   - component: Typed  # has no tests
 
         steps:

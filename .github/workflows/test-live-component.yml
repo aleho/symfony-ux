@@ -1,0 +1,73 @@
+name: Symfony UX Live Components
+
+on:
+    push:
+        paths:
+            - 'src/LiveComponent/**'
+    pull_request:
+        paths:
+            - 'src/LiveComponent/**'
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        strategy:
+           fail-fast: false
+           matrix:
+               php-version: ['8.1', '8.3']
+               include:
+                  - php-version: '8.1'
+                    dependency-version: 'lowest'
+                  - php-version: '8.3'
+                    dependency-version: 'highest'
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+
+            - name: Install root packages
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: ${{ github.workspace }}
+                  dependency-versions: ${{ matrix.dependency-version }}
+
+            - name: Build root packages
+              run: php .github/build-packages.php
+              working-directory: ${{ github.workspace }}
+
+            - name: Install LiveComponent packages
+              uses: ramsey/composer-install@v3
+              with:
+                working-directory: src/LiveComponent
+                dependency-versions: ${{ matrix.dependency-version }}
+
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+            - uses: actions/cache@v4
+              id: yarn-cache
+              with:
+                  path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('src/LiveComponent/assets/**', 'src/LiveComponent/tests/package.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+
+            - name: Install JavaScript dependencies
+              working-directory: src/LiveComponent/tests/app
+              run: yarn install
+
+            - name: Build JavaScript
+              working-directory: src/LiveComponent/tests/app
+              run: yarn build
+
+            - name: Run tests
+              working-directory: src/LiveComponent
+              run: vendor/bin/simple-phpunit
+              env:
+                  SYMFONY_DEPRECATIONS_HELPER: 'max[self]=1'

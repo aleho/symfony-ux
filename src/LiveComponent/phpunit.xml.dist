@@ -19,6 +19,7 @@
         <server name="DATABASE_URL" value="sqlite:///%kernel.project_dir%/var/data.db"/>
         <env name="SHELL_VERBOSITY" value="-1"/>
         <server name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;max[direct]=0&amp;ignoreFile=./tests/baseline-ignore"/>
+        <server name="PANTHER_WEB_SERVER_DIR" value="./tests/app/public" />
     </php>
 
     <testsuites>
@@ -30,4 +31,8 @@
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
     </listeners>
+
+    <extensions>
+        <extension class="Symfony\Component\Panther\ServerExtension" />
+    </extensions>
 </phpunit>
