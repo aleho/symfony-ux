@@ -1,0 +1,25 @@
+<div{{ attributes }}>
+    <p
+        id="content"
+        class="
+            first
+            second
+            {{ class }}
+        "
+    >
+        <span>Class: {{ class }}</span>
+    </p>
+
+    <a
+        href="#"
+        data-action="live#action"
+        data-live-action-param="click"
+        onclick="document.querySelector('p').classList.remove('first')"
+    >
+        Remove class and render
+    </a>
+
+    {% if changed %}
+        <div id="changed"></div>
+    {% endif %}
+</div>
